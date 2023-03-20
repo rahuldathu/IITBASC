@@ -40,7 +40,7 @@ const getUserData = async (req, res) => {
     // res.send(JSON.stringify(result.rows[0]));
     res.writeHead(200,'Content-Type', 'application/json')
     res.write(JSON.stringify(data));
-    console.log(data)
+    // console.log(data)
     // res.end();
   }
   catch(error){
@@ -63,46 +63,64 @@ const getUserData = async (req, res) => {
 };
 
 // Function to retrieve the courses registered by the logged in user in previous semesters
-// const getCourses = async (req, res) => {
-//   const client = await getClient();
-//   // const id = req.query.id;
-//   const id = '12345';
-//   // query works checked
-//   const query2 = `
-//     SELECT t.sec_id, t.semester, t.year, c.course_id, title, credits
-//     FROM takes t
-//     JOIN section s ON t.course_id = s.course_id AND t.sec_id = s.sec_id AND t.semester = s.semester AND t.year = s.year
-//     JOIN course c ON s.course_id = c.course_id
-//     WHERE id = $1 AND (t.semester, t.year) < (SELECT semester, year FROM reg_dates ORDER BY year DESC, semester DESC LIMIT 1)
-//     ORDER BY  year DESC, semester DESC, title DESC
-//   `;
+const getCourses = async (req, res) => {
+  // const client = await getClient();
+  // const id = req.query.id;
+  const id = '54321';
+  // query works checked
+  await client.connect();
+  const query2 = `
+    SELECT t.sec_id, t.semester, t.year, c.course_id, title, credits
+    FROM takes t
+    JOIN section s ON t.course_id = s.course_id AND t.sec_id = s.sec_id AND t.semester = s.semester AND t.year = s.year
+    JOIN course c ON s.course_id = c.course_id
+    WHERE id = $1 AND (t.semester, t.year) < (SELECT semester, year FROM reg_dates ORDER BY year DESC, semester DESC LIMIT 1)
+    ORDER BY  year DESC, semester DESC, title DESC
+  `;
 
-//   client.query(query2, [id], (err, result) => {
-//     if (err) {
-//       return console.error('Error executing query', err.stack);
-//     }
-//     // res.send(groupBySemester(result.rows));
-//     // const groupedCourses = groupBySemester(result.rows);
-//     // console.log(result.rows)
-//     res.setHeader('Content-Type', 'application/json');
-//     // res.send(JSON.stringify(groupedCourses));
-//     res.send(JSON.stringify(groupBySemester(result.rows)));
+  try{
+    const result = await client.query(query2, [id])
+    res.writeHead(200,'Content-Type', 'application/json')
+    res.write(JSON.stringify(result));
+    console.log(JSON.stringify(result.rows))
+    console.log('')
+    console.log(JSON.stringify(groupBySemester(result.rows)))
+    // res.send(JSON.stringify(result.rows))
+  }
+  catch(err){
+    console.error(err);
+    // res.status(500).send({ error: "An error occurred on the server." });
+  }
+  
+  
+  // client.query(query2, [id], (err, result) => {
+  //   if (err) {
+  //     return console.error('Error executing query', err.stack);
+  //   }
+  //   console.log('hello world')
+  //   // res.send(groupBySemester(result.rows));
+  //   // const groupedCourses = groupBySemester(result.rows);
+  //   // console.log(result.rows)
+  //   res.setHeader('Content-Type', 'application/json');
+  //   // res.send(JSON.stringify(groupedCourses));
+  //   console.log(JSON.stringify(result.rows))
+  //   res.send(JSON.stringify(groupBySemester(result.rows)));
 
-//   });
-// };
+  // });
+};
 
 // Helper function to group the courses by semester
-// const groupBySemester = courses => {
-//   const groups = {};
-//   courses.forEach(course => {
-//     const key = `${course.semester} ${course.year}`;
-//     if (!groups[key]) {
-//       groups[key] = [];
-//     }
-//     groups[key].push(course);
-//   });
-//   return Object.entries(groups).map(([name, courses]) => ({ name, courses }));
-// };
+const groupBySemester = courses => {
+  const groups = {};
+  courses.forEach(course => {
+    const key = `${course.semester} ${course.year}`;
+    if (!groups[key]) {
+      groups[key] = [];
+    }
+    groups[key].push(course);
+  });
+  return Object.entries(groups).map(([name, courses]) => ({ name, courses }));
+};
 
 // create a http server
 const server = http.createServer((req,res) => {
@@ -111,9 +129,9 @@ const server = http.createServer((req,res) => {
         
         getUserData(req,res);
     }
-    // if(req.url === '/home/getCourses') {
-    //     getCourses(req,res);
-    // }
+    if(req.url === '/home/getCourses') {
+        getCourses(req,res);
+    }
     res.end();
 
 }).listen(4000,() => {
