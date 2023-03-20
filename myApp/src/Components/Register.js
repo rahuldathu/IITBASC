@@ -6,8 +6,9 @@ const Register = () => {
 
   const handleSubmit = async event => {
     event.preventDefault();
-    console.log(event)
+    // console.log(event)
     try {
+      //promise
       const response = await fetch(`http://localhost:8080/register`, {
         method: "POST",
         headers: {

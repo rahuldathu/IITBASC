@@ -16,7 +16,7 @@ app.use(session({ secret: 'secret', saveUninitialized: true, resave: true }));
 // import the controllers
 const register = require('./Controllers/register');
 const login = require('./Controllers/login');
-const home = require('./Controllers/home');
+// const home = require('./Controllers/home');
 // const instructor =  require('./Controllers/instructor');
 // const course = require('./Controllers/course');
 // const courseRunning  = require('./Controllers/courseRunning');
@@ -28,7 +28,7 @@ app.post('/register', register.register);
 // authenticate user
 app.post('/login', login.login);
 // app.post('/home', home.router);
-app.post('/home/getUserData', home.getUserData);
+// app.post('/home/getUserData', home.getUserData);
 // app.post('/home/getCourses', home.getCourses);
 // app.post('/instructor/:instructor_id', instructor.instructor);
 // app.post('/course/:course_id', course.getCourses);

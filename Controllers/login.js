@@ -2,20 +2,7 @@ const bcrypt = require("bcrypt");
 require('dotenv').config()
 const pg = require('pg');
 const {getClient} = require('./get-client')
-
-
-// (async () => {
-//   const client = new pg.Client({
-//   host: process.env.PG_HOST,
-//   port: process.env.PG_PORT,
-//   user: process.env.PG_USER,
-//   password: process.env.PG_PASSWORD,
-//   database: process.env.PG_DATABASE,  
-// });
-// console.log(client)
-// await client.connect();
-// })
-
+// const session = require('express-session')
 
 
 
@@ -46,7 +33,9 @@ const login = async (req, res) => {
     } else {
       const hashedPassword = user.hashed_password;
       if (bcrypt.compareSync(password, hashedPassword)) {
+        console.log(req.session.user)
         req.session.user = id;
+        console.log(req.session.user)
         res.status(200).send({ message: "User logged in successfully." });
       } else {
         res.status(401).send({ error: "Incorrect password." });

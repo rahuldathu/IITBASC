@@ -19,7 +19,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="login" element={<Login />} />
-        <Route path="home" element={<Home />} />
+        {/* <Route path="home" element={<Home />} /> */}
         <Route path="register" element={<Register />} />
         {/* <Route path="course/:course_id" element={<Course />} />
         <Route path="course/running" element={<CourseRunning />} />
